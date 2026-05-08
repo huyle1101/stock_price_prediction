@@ -4,3 +4,4 @@ workflow.html
 db/
 .env
 .vscode
+data/
