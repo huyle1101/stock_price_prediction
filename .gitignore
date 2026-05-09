@@ -5,3 +5,4 @@ db/
 .env
 .vscode
 data/
+files_working.py
