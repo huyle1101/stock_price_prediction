@@ -140,13 +140,34 @@ services:
       - ./src:/app/src                                                 # source code
       - ./data:/app/data                                               # read/write data files
       - ./models:/app/models                                           # read/write model artifacts
-      #   models/ structure on host:
-      #   models/pretrain/arimax/   ← arimax_VNM.pkl ...
-      #   models/pretrain/lstm/     ← lstm_VNM.pkl ...
-      #   models/pretrain/gru/      ← gru_VNM.pkl ...
-      #   models/pretrain/transformer/ ← transformer_VNM.pkl ...
-      #   models/pretrain/meta_ridge/  ← ridge_meta.pkl
       - ./logs/pipeline:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - stocknet
+
+  # ── Streamlit UI ────────────────────────────────────────────────────
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stock_streamlit
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      MINIO_HOST: minio
+    # LƯU Ý: Cập nhật đường dẫn 'src/app.py' thành file chạy Streamlit thực tế của bạn
+    command: ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"     # Streamlit UI at http://localhost:8501
+    volumes:
+      - ./src:/app/src                                                 # source code
+      - ./data:/app/data                                               # read data for dashboard
+      - ./models:/app/models                                           # read models for real-time inference (if needed)
     depends_on:
       postgres:
         condition: service_healthy
