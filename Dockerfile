@@ -13,7 +13,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+    pip install torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements.txt
