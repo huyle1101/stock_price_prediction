@@ -2,7 +2,8 @@ FROM apache/airflow:2.9.1-python3.11
 
 USER root
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     libpq-dev \
@@ -11,17 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 USER airflow
 
 COPY requirements-airflow.txt .
-RUN pip install --no-cache-dir -r requirements-airflow.txt
 
+RUN --mount=type=cache,target=/home/airflow/.cache/pip \
+    pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu
 
-# FROM apache/airflow:2.9.1-python3.11
-
-# USER root
-# # Chỉ cài thêm các thư viện runtime nếu thực sự cần, bỏ gcc/g++
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     libpq-dev \
-#     && rm -rf /var/lib/apt/lists/*
-
-# USER airflow
-# COPY requirements-airflow.txt .
-# RUN pip install --no-cache-dir -r requirements-airflow.txt
+RUN --mount=type=cache,target=/home/airflow/.cache/pip \
+    pip install -r requirements-airflow.txt
