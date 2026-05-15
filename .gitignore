@@ -7,3 +7,4 @@ db/
 data/
 files_working.py
 files_merge.py
+logs/

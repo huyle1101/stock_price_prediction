@@ -2,6 +2,8 @@
 -- runs automatically on first postgres container start
 -- creates all tables for the stock prediction pipeline
 
+CREATE DATABASE airflow;
+
 -- ── prices ──────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS prices (
     date        TEXT        NOT NULL,
